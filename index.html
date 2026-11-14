@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#060913">
+  <title>ORBITAL // Crew Health Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="space-noise"></div>
+  <div class="alert-vignette" id="alert-vignette"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Orbital health monitor home">
+      <span class="brand-mark"><i data-lucide="orbit"></i></span>
+      <span class="brand-name">ORBITAL<span class="brand-sub">/ CREW HEALTH SYSTEMS</span></span>
+    </a>
+    <div class="mission-meta">
+      <span class="status-chip"><span class="beacon"></span><span id="mission-status">NOMINAL</span></span>
+      <span class="meta-divider"></span>
+      <span class="meta-label">MISSION ELAPSED</span>
+      <span class="mono met-clock" id="met-clock">142:18:06:42</span>
+      <span class="meta-divider"></span>
+      <div class="comms-status">
+        <span class="wave-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+        <span>EARTH COMMS <b>14m 22s</b><em>— AUTONOMOUS TRIAGE ACTIVE</em></span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-button" id="notification-button" aria-label="Notifications"><i data-lucide="bell"></i><span class="notification-dot"></span></button>
+      <button class="spe-toggle" id="spe-toggle" aria-pressed="false"><span class="spe-toggle-icon"><i data-lucide="radio-tower"></i></span><span><b>SIMULATE SPE</b><small>SOLAR PARTICLE EVENT</small></span><span class="toggle-track"><i></i></span></button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="page-heading">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-line"></span> ARTEMIS III / DEEP SPACE TRANSIT</div>
+        <h1>Crew health <span>overview</span></h1>
+        <p>Autonomous medical monitoring · Flight day 142 · <span id="local-time">SYNCING UTC…</span></p>
+      </div>
+      <div class="heading-right">
+        <div class="crew-count"><span class="tiny-pulse"></span> 4 CREW MEMBERS <span class="dim">/ ALL SYSTEMS MONITORED</span></div>
+        <button class="primary-button" id="open-exam"><i data-lucide="clipboard-plus"></i> LOG TODAY'S SELF-EXAM <span class="button-shortcut">↗</span></button>
+      </div>
+    </section>
+
+    <section class="crew-section" aria-label="Select crew member">
+      <div class="section-label"><span>FLIGHT CREW</span><span class="section-rule"></span><span class="section-hint">SELECT MEMBER TO VIEW TELEMETRY</span></div>
+      <div class="crew-grid" id="crew-grid"></div>
+    </section>
+
+    <section class="main-grid">
+      <article class="panel body-panel">
+        <div class="panel-heading">
+          <div><span class="panel-kicker">01 / SYSTEMS ANALYSIS</span><h2>Physiological map</h2></div>
+          <button class="subtle-button" id="reset-system"><i data-lucide="scan-line"></i> ALL SYSTEMS</button>
+        </div>
+        <div class="body-map-layout">
+          <div class="dna-system-column">
+            <div class="body-visual-wrap dna-visual-wrap">
+              <svg class="dna-hologram" viewBox="0 0 520 520" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Glowing cyan DNA double helix surrounded by concentric holographic rings and a circular platform">
+                <defs>
+                  <radialGradient id="dna-backglow"><stop stop-color="#06b6d4" stop-opacity=".2"/><stop offset=".55" stop-color="#0e7490" stop-opacity=".08"/><stop offset="1" stop-color="#060913" stop-opacity="0"/></radialGradient>
+                  <linearGradient id="dna-strand" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#cffafe"/><stop offset=".22" stop-color="#67e8f9"/><stop offset=".5" stop-color="#06b6d4"/><stop offset=".77" stop-color="#22d3ee"/><stop offset="1" stop-color="#a5f3fc"/></linearGradient>
+                  <linearGradient id="dna-rung" gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="50" y2="430"><stop stop-color="#a5f3fc" stop-opacity=".92"/><stop offset=".5" stop-color="#06b6d4" stop-opacity=".78"/><stop offset="1" stop-color="#67e8f9" stop-opacity=".5"/></linearGradient>
+                  <linearGradient id="dna-beam" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#22d3ee" stop-opacity="0"/><stop offset=".65" stop-color="#22d3ee" stop-opacity=".14"/><stop offset="1" stop-color="#67e8f9" stop-opacity=".52"/></linearGradient>
+                  <radialGradient id="dna-platform-light"><stop stop-color="#67e8f9" stop-opacity=".55"/><stop offset=".55" stop-color="#06b6d4" stop-opacity=".2"/><stop offset="1" stop-color="#06b6d4" stop-opacity="0"/></radialGradient>
+                  <filter id="dna-glow" x="-.6" y="-.4" width="2.2" height="1.8"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                  <filter id="dna-soft-glow" x="-.7" y="-.7" width="2.4" height="2.4"><feGaussianBlur stdDeviation="8"/></filter>
+                </defs>
+                <circle class="dna-aura" cx="260" cy="250" r="230" fill="url(#dna-backglow)"/>
+                <g class="dna-ring-rotor">
+                  <circle class="dna-ring dna-ring-outer" cx="260" cy="238" r="192"/>
+                  <circle class="dna-ring dna-ring-mid" cx="260" cy="238" r="163"/>
+                  <circle class="dna-ring dna-ring-inner" cx="260" cy="238" r="127"/>
+                  <circle class="dna-ring dna-ring-dashed" cx="260" cy="238" r="101"/>
+                  <path class="dna-ring-segment" d="M122 104A192 192 0 0 1 232 48M288 48A192 192 0 0 1 393 104M453 190A192 192 0 0 1 439 317M391 375A192 192 0 0 1 309 423M211 423A192 192 0 0 1 129 375M81 317A192 192 0 0 1 67 190"/>
+                </g>
+                <g class="dna-particles" aria-hidden="true"><circle cx="112" cy="176" r="2"/><circle cx="400" cy="162" r="2.3"/><circle cx="146" cy="337" r="1.7"/><circle cx="374" cy="350" r="1.8"/><circle cx="190" cy="72" r="1.6"/><circle cx="330" cy="82" r="1.8"/><circle cx="87" cy="265" r="1.5"/><circle cx="432" cy="259" r="1.6"/></g>
+                <g class="dna-beams" aria-hidden="true"><path d="M184 338V435"/><path d="M207 347V443"/><path d="M231 355V447"/><path d="M260 358V450"/><path d="M289 355V447"/><path d="M313 347V443"/><path d="M336 338V435"/></g>
+                <ellipse class="dna-platform-glow" cx="260" cy="442" rx="139" ry="40" fill="url(#dna-platform-light)"/>
+                <g class="dna-helix" aria-hidden="true">
+                  <path class="dna-strand-shadow" d="M208 52C350 88 350 144 260 184S170 280 260 322 350 384 208 422"/>
+                  <path class="dna-strand-shadow" d="M312 52C170 88 170 144 260 184S350 280 260 322 170 384 312 422"/>
+                  <g class="dna-rungs"><path d="M209 58H311"/><path d="M190 82H330"/><path d="M179 106H341"/><path d="M178 130H342"/><path d="M188 154H332"/><path d="M209 178H311"/><path d="M237 202H283"/><path d="M266 226H254"/><path d="M237 250H283"/><path d="M209 274H311"/><path d="M188 298H332"/><path d="M178 322H342"/><path d="M179 346H341"/><path d="M190 370H330"/><path d="M209 394H311"/><path d="M230 418H290"/></g>
+                  <path class="dna-strand dna-strand-a" d="M208 52C350 88 350 144 260 184S170 280 260 322 350 384 208 422"/>
+                  <path class="dna-strand dna-strand-b" d="M312 52C170 88 170 144 260 184S350 280 260 322 170 384 312 422"/>
+                  <path class="dna-strand-highlight" d="M211 58C329 91 333 143 257 181S180 279 257 319 331 379 214 414"/>
+                </g>
+                <g class="dna-platform" aria-hidden="true"><ellipse cx="260" cy="446" rx="155" ry="25"/><ellipse cx="260" cy="446" rx="132" ry="18"/><ellipse cx="260" cy="446" rx="96" ry="12"/><ellipse class="dna-platform-core" cx="260" cy="446" rx="65" ry="7"/></g>
+              </svg>
+            </div>
+            <div class="organ-system-controls" role="group" aria-label="Select health system">
+              <button class="system-pill" data-system="brain" type="button" aria-pressed="false"><i data-lucide="brain"></i><span>BRAIN</span><b class="organ-status-dot"></b></button>
+              <button class="system-pill" data-system="lungs" type="button" aria-pressed="false"><i data-lucide="wind"></i><span>LUNGS</span><b class="organ-status-dot"></b></button>
+              <button class="system-pill" data-system="liver" type="button" aria-pressed="false"><i data-lucide="activity"></i><span>LIVER</span><b class="organ-status-dot"></b></button>
+              <button class="system-pill" data-system="kidneys" type="button" aria-pressed="false"><i data-lucide="bean"></i><span>KIDNEYS</span><b class="organ-status-dot"></b></button>
+              <button class="system-pill" data-system="heart" type="button" aria-pressed="false"><i data-lucide="heart-pulse"></i><span>HEART</span><b class="organ-status-dot"></b></button>
+              <button class="system-pill" data-system="stomach" type="button" aria-pressed="false"><i data-lucide="activity"></i><span>STOMACH</span><b class="organ-status-dot"></b></button>
+              <button class="system-pill" data-system="intestines" type="button" aria-pressed="false"><i data-lucide="git-branch"></i><span>INTESTINES</span><b class="organ-status-dot"></b></button>
+            </div>
+          </div>
+          <div class="diagnostic" id="diagnostic">
+            <div class="diagnostic-top"><span class="diagnostic-index">SYSTEM 01 / MUSCULOSKELETAL</span><span class="system-status optimal-text" id="system-status"><i class="live-dot"></i> NOMINAL</span></div>
+            <h3 id="diagnostic-title">Spine &amp; bone loading</h3>
+            <div class="measurement"><span>TRACKED MEASUREMENT</span><strong id="measurement-value">ARED exercise <b>150 min/wk</b></strong></div>
+            <p id="diagnostic-copy">Bones and muscles receive less load in microgravity, which can accelerate bone mineral loss and muscle atrophy. Resistive exercise helps preserve strength and skeletal health.</p>
+            <div class="care-box"><div class="care-heading"><i data-lucide="sparkles"></i> SELF-CARE GUIDANCE</div><p id="care-guidance">Complete scheduled ARED resistance sessions using good form. Include squat and deadlift movements when prescribed.</p></div>
+            <div class="alert-rule"><i data-lucide="shield-alert"></i><span id="alert-guidance">Alert Flight Surgeon for new bone pain, injury, or inability to complete prescribed exercise.</span></div>
+            <button class="text-button" id="view-system-trend">VIEW SYSTEM TREND <i data-lucide="arrow-up-right"></i></button>
+          </div>
+        </div>
+        <div class="map-status-legend"><span><i class="legend-dot optimal"></i> OPTIMAL</span><span><i class="legend-dot drift"></i> DRIFT</span><span><i class="legend-dot critical"></i> ALERT</span><span class="legend-note">ORGAN STATUS / LIVE</span></div>
+        <div class="vital-strip" id="vital-strip"></div>
+      </article>
+
+      <article class="panel chart-panel">
+        <div class="panel-heading">
+          <div><span class="panel-kicker">02 / BIOMETRIC HISTORY</span><h2>30-day trends</h2></div>
+          <button class="icon-button chart-menu" aria-label="Chart options"><i data-lucide="more-horizontal"></i></button>
+        </div>
+        <div class="chart-tabs" role="tablist" aria-label="Trend metric">
+          <button class="chart-tab active" data-metric="heartRate">HEART RATE</button>
+          <button class="chart-tab" data-metric="sleepDebt">SLEEP DEBT</button>
+          <button class="chart-tab" data-metric="radiation">RADIATION</button>
+          <button class="chart-tab" data-metric="boneLoad">BONE LOAD</button>
+        </div>
+        <div class="chart-summary"><div><span class="summary-label" id="chart-summary-label">RESTING HR</span><strong class="mono" id="chart-current">62 <small>bpm</small></strong></div><div class="trend-change" id="chart-trend"><i data-lucide="trending-down"></i> 3.2% <span>vs. last 7d</span></div></div>
+        <div class="chart-wrap"><canvas id="trend-chart" aria-label="30 day biometric trend chart"></canvas></div>
+        <div class="chart-footer"><span><i class="chart-legend-line"></i> CREW TELEMETRY</span><span><i class="chart-legend-dash"></i> FLIGHT LIMIT</span><button id="chart-range">LAST 30 DAYS <i data-lucide="chevron-down"></i></button></div>
+      </article>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="panel protocol-panel">
+        <div class="panel-heading">
+          <div><span class="panel-kicker">03 / COUNTERMEASURES</span><h2>Today's protocol</h2></div>
+          <div class="streak-badge"><i data-lucide="flame"></i><span><b id="streak-count">12</b><small>DAY STREAK</small></span></div>
+        </div>
+        <div class="protocol-progress"><span id="protocol-progress-label">0 OF 3 COMPLETED</span><span class="mono" id="protocol-progress-pct">0%</span><div class="progress-track"><span id="protocol-progress-bar"></span></div></div>
+        <div class="protocol-list" id="protocol-list"></div>
+        <div class="protocol-footer"><span><i data-lucide="zap"></i> COMPLETING PROTOCOLS BOOSTS READINESS</span><span class="mono">+2 PTS / TASK</span></div>
+      </article>
+
+      <article class="panel readiness-panel">
+        <div class="panel-heading">
+          <div><span class="panel-kicker">04 / MISSION STATUS</span><h2>Crew readiness</h2></div>
+          <button class="subtle-button" id="readiness-info"><i data-lucide="info"></i> HOW IT WORKS</button>
+        </div>
+        <div class="readiness-content">
+          <div class="readiness-ring-wrap"><svg class="readiness-ring" viewBox="0 0 160 160" aria-label="Crew readiness score">
+            <circle class="ring-track" cx="80" cy="80" r="68"/>
+            <circle class="ring-progress" id="readiness-ring-progress" cx="80" cy="80" r="68"/>
+          </svg><div class="readiness-score"><strong id="readiness-score">92</strong><span>READINESS</span></div></div>
+          <div class="readiness-info">
+            <div class="readiness-state"><span class="state-mark"></span><span><b id="readiness-state-title">MISSION READY</b><small id="readiness-state-subtitle">All systems within operational parameters</small></span></div>
+            <div class="score-breakdown"><div><span>VITALS</span><b id="vitals-score">96%</b></div><div><span>SLEEP / RECOVERY</span><b id="sleep-score">88%</b></div><div><span>COUNTERMEASURES</span><b id="countermeasure-score">0%</b></div></div>
+            <button class="readiness-link" id="readiness-details">VIEW READINESS BREAKDOWN <i data-lucide="arrow-right"></i></button>
+          </div>
+        </div>
+      </article>
+    </section>
+    <footer class="footer"><span><i data-lucide="satellite"></i> ORBITAL MEDICAL MONITORING SYSTEM <span class="dim">v2.6.1</span></span><span>NASA-STD-3001 GUIDANCE · SIMULATION DATA FOR DEMONSTRATION ONLY</span><span>SECURE LINK <i class="footer-lock" data-lucide="lock-keyhole"></i></span></footer>
+  </main>
+
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="exam-drawer" id="exam-drawer" aria-label="Log today's self-exam" aria-hidden="true">
+    <div class="drawer-header"><div><span class="panel-kicker">CREW SELF-REPORT / FLIGHT DAY 142</span><h2>Log today's self-exam</h2></div><button class="icon-button" id="close-exam" aria-label="Close self-exam"><i data-lucide="x"></i></button></div>
+    <p class="drawer-intro">Record your current readings. Your data updates the crew health model immediately.</p>
+    <form id="exam-form">
+      <label class="form-range"><span><b>Resting heart rate</b><small>beats per minute</small></span><output id="heart-rate-output">62 bpm</output><input name="heartRate" type="range" min="40" max="120" value="62"></label>
+      <label class="form-range"><span><b>Blood pressure</b><small>systolic mmHg</small></span><output id="bp-output">118 mmHg</output><input name="bp" type="range" min="80" max="180" value="118"></label>
+      <label class="form-range"><span><b>Blood glucose</b><small>mg/dL</small></span><output id="glucose-output">92 mg/dL</output><input name="glucose" type="range" min="60" max="200" value="92"></label>
+      <label class="form-range"><span><b>Body temperature</b><small>degrees Celsius</small></span><output id="temperature-output">36.8 °C</output><input name="temperature" type="range" min="350" max="400" value="368"></label>
+      <label class="form-range"><span><b>Sleep last 24 hours</b><small>hours</small></span><output id="sleep-output">7.2 hrs</output><input name="sleep" type="range" min="0" max="12" value="7.2" step="0.1"></label>
+      <label class="form-range"><span><b>Mood / stress</b><small>1 calm — 10 highly stressed</small></span><output id="mood-output">3 / 10</output><input name="mood" type="range" min="1" max="10" value="3"></label>
+      <label class="form-range"><span><b>ARED exercise this week</b><small>minutes</small></span><output id="ared-output">150 min</output><input name="ared" type="range" min="0" max="300" value="150"></label>
+      <div class="form-note"><i data-lucide="shield-check"></i> Readings are used for onboard decision support. Contact Flight Surgeons for urgent symptoms.</div>
+      <button class="primary-button submit-exam" type="submit"><i data-lucide="send"></i> SUBMIT SELF-EXAM <span class="button-shortcut">↗</span></button>
+    </form>
+  </aside>
+
+  <div class="spe-modal-backdrop" id="spe-modal-backdrop"></div>
+  <section class="spe-modal panel" id="spe-modal" aria-label="Solar particle event emergency checklist" aria-hidden="true">
+    <div class="spe-modal-heading"><div><span class="emergency-eyebrow"><span class="beacon red-beacon"></span> SOLAR PARTICLE EVENT / SIMULATION</span><h2>Storm shelter protocol</h2><p>Follow the onboard radiation response checklist. Complete each step to stabilize crew status.</p></div><button class="icon-button" id="close-spe" aria-label="Close emergency checklist"><i data-lucide="x"></i></button></div>
+    <div class="flux-card"><div><span>RADIATION FLUX</span><strong class="mono" id="flux-reading">0.38 <small>mSv/hr</small></strong></div><span class="flux-wave">LIVE EVENT DATA <i></i><i></i><i></i><i></i></span></div>
+    <div class="spe-checklist" id="spe-checklist"></div>
+    <div class="spe-modal-footer"><span id="spe-progress-label">0 / 3 STEPS COMPLETE</span><button class="primary-button" id="spe-finish" disabled>STABILIZE CREW STATUS <i data-lucide="shield-check"></i></button></div>
+  </section>
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
